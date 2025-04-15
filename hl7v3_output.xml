@@ -1,0 +1,293 @@
+<?xml version="1.0"?>
+<PRPA_IN101001UV02 xmlns="urn:hl7-org:v3" ITSVersion="3.0">
+  <id root="MSG00001"/>
+  <creationTime value="202504101200"/>
+  <interactionId root="2.16.840.1.113883.1.6" extension="PRPA_IN101001UV02"/>
+  <processingCode code="P"/>
+  <processingModeCode code="T"/>
+  <acceptAckCode code="AL"/>
+  <receiver typeCode="RCV">
+    <device classCode="DEV" determinerCode="INSTANCE">
+      <id root="LAB"/>
+      <name>LAB</name>
+      <name>LAB System at LABSYSTEM</name>
+    </device>
+  </receiver>
+  <sender typeCode="SND">
+    <device classCode="DEV" determinerCode="INSTANCE">
+      <id root="HIS"/>
+      <name>HIS System at HOSPITAL</name>
+    </device>
+  </sender>
+  <controlActProcess classCode="CACT" moodCode="EVN">
+    <code code="A01" codeSystem="2.16.840.1.113883.1.18"/>
+    <effectiveTime value="202504101200"/>
+    <authorOrPerformer typeCode="AUT">
+      <assignedPerson>
+        <id extension="12345"/>
+        <assignedPerson>
+          <name>
+            <family>Dr.Smith</family>
+            <given/>
+          </name>
+        </assignedPerson>
+      </assignedPerson>
+    </authorOrPerformer>
+  </controlActProcess>
+  <patient classCode="PAT" moodCode="EVN">
+    <id extension="123456^^^HOSPITAL^MR" root="2.16.840.1.113883.1.3"/>
+    <asOtherIDs classCode="SSN">
+      <id extension="" root="2.16.840.1.113883.4.1"/>
+    </asOtherIDs>
+    <name>
+      <family>YILMAZ</family>
+      <given>AYŞE</given>
+      <middle/>
+      <prefix/>
+      <suffix/>
+    </name>
+    <personalRelationship classCode="PRS" code="MTH">
+      <name/>
+    </personalRelationship>
+    <birthTime value="19850523"/>
+    <administrativeGenderCode code="F" codeSystem="2.16.840.1.113883.5.1"/>
+    <addr>
+      <streetAddressLine>123 SOKAK NO:10</streetAddressLine>
+      <city>ISTANBUL</city>
+      <state/>
+      <postalCode>34000</postalCode>
+      <country/>
+    </addr>
+    <telecom use="PRN" value="tel:(212)5551234"/>
+    <maritalStatusCode code="M" codeSystem="2.16.840.1.113883.5.2"/>
+    <asOtherIDs classCode="SSN">
+      <id extension="12345678901" root="2.16.840.1.113883.4.1"/>
+    </asOtherIDs>
+  </patient>
+  <nextOfKin>
+    <nextOfKinInfo>
+      <relation code="SPOUSE" codeSystem="2.16.840.1.113883.5.1"/>
+      <name>
+        <family>YILMAZ</family>
+        <given>MEHMET</given>
+      </name>
+      <address>
+        <streetAddressLine>123 SOKAK NO:10</streetAddressLine>
+        <city>ISTANBUL</city>
+        <postalCode>34000^TR</postalCode>
+      </address>
+      <telecom use="CP" value="tel:(212)5557890"/>
+    </nextOfKinInfo>
+    <nextOfKinInfo>
+      <relation code="FATHER" codeSystem="2.16.840.1.113883.5.1"/>
+      <name>
+        <family>KARAHAN</family>
+        <given>HASAN</given>
+      </name>
+      <address>
+        <streetAddressLine>456 MAHALLE NO:15</streetAddressLine>
+        <city>ISTANBUL</city>
+        <postalCode>34001^TR</postalCode>
+      </address>
+      <telecom use="CP" value="tel:(212)5559876"/>
+    </nextOfKinInfo>
+  </nextOfKin>
+  <patientVisit>
+    <id extension="A" root="2.16.840.1.113883.1.3"/>
+    <location value="CARDIO^101^1^HOSPITAL"/>
+    <visitNumber value="202504101500"/>
+    <patientClass value="I"/>
+    <patientType value="S"/>
+    <attendingDoctor>
+      <assignedPerson>
+        <name>
+          <family>12345</family>
+          <given>Dr.Smith</given>
+        </name>
+      </assignedPerson>
+    </attendingDoctor>
+    <admittingDoctor>
+      <assignedPerson>
+        <name>
+          <family>12345</family>
+          <given>Dr.Smith</given>
+        </name>
+      </assignedPerson>
+    </admittingDoctor>
+    <refferingDoctor>
+      <assignedPerson>
+        <name>
+          <family>67890</family>
+          <given>Dr.Jones</given>
+        </name>
+      </assignedPerson>
+    </refferingDoctor>
+    <consultingDoctor>
+      <assignedPerson>
+        <name>
+          <family>23456</family>
+          <given>Dr.Miller</given>
+        </name>
+      </assignedPerson>
+    </consultingDoctor>
+    <hospitalService value="2345^NURSE HARRY^NURSE"/>
+    <admissionDateTime value="202504101300"/>
+    <dischargeDateTime value="202504101530"/>
+    <admitSource value="^S"/>
+    <priority value="A"/>
+  </patientVisit>
+  <patientVisitAdditionalInfo>
+    <priorPendingLocation value="1"/>
+    <accommodationCode value="A"/>
+    <admitReason value="F"/>
+    <transferReason value="R"/>
+    <patientValuables value="N"/>
+    <patientValuablesLocation value="N"/>
+    <visitUserCode value="S"/>
+    <expectedAdmitDateTime value="202504121430"/>
+    <expectedDischargeDateTime value="202504121500"/>
+    <estimatedLengthOfStay value="202504121800"/>
+    <actualLengthOfStay value="202504121730"/>
+    <visitDescription value="S"/>
+    <referralSourceCode value="C"/>
+    <previousServiceDate value="P"/>
+    <employmentIllnessRelatedIndicator value="N"/>
+    <purgeStatusCode value="Y"/>
+    <purgeStatusDate value="A"/>
+    <specialProgramCode value="W"/>
+    <retentionIndicator value="1^2^3"/>
+    <expectedNumberOfInsurancePlans value="Y"/>
+    <visitPublicityCode value="1^2^3"/>
+    <visitProtectionIndicator value="1^2^3"/>
+  </patientVisitAdditionalInfo>
+  <Orders>
+    <Order>
+      <orderNumber root="2.16.840.1.113883.1.3"/>
+      <testName>LABTEST^Complete Blood Count</testName>
+      <observationDateTime value="202504101500"/>
+    </Order>
+  </Orders>
+  <OrderControlInformation>
+    <Order>
+      <orderControl>RE</orderControl>
+      <placerOrderNumber>1234567</placerOrderNumber>
+      <fillerOrderNumber>9876543</fillerOrderNumber>
+      <orderStatus>CM</orderStatus>
+      <scheduledDateTime value="202504101800"/>
+      <orderingProvider>12345^Dr.Smith</orderingProvider>
+    </Order>
+  </OrderControlInformation>
+  <ObservationResults>
+    <Observation>
+      <testCode code="CE" codeSystem="2.16.840.1.113883.6.1"/>
+      <value>120/80</value>
+      <unit>mmHg</unit>
+      <status>NORMAL</status>
+      <probability>F</probability>
+      <dateTime value="202504101500"/>
+    </Observation>
+    <Observation>
+      <testCode code="NM" codeSystem="2.16.840.1.113883.6.1"/>
+      <value>13.5</value>
+      <unit>g/dL</unit>
+      <status>NORMAL</status>
+      <probability>F</probability>
+      <dateTime value="202504101500"/>
+    </Observation>
+    <Observation>
+      <testCode code="NM" codeSystem="2.16.840.1.113883.6.1"/>
+      <value>7.2</value>
+      <unit>x10^9/L</unit>
+      <status>NORMAL</status>
+      <probability>F</probability>
+      <dateTime value="202504101500"/>
+    </Observation>
+  </ObservationResults>
+  <AllergyInformation>
+    <Allergy>
+      <allergyType>DA</allergyType>
+      <allergyCode code="A01" codeSystem="2.16.840.1.113883.6.1"/>
+      <substance>Penicillin</substance>
+      <reaction>Mild rash</reaction>
+      <dateTime value="202504101500"/>
+    </Allergy>
+    <Allergy>
+      <allergyType>DA</allergyType>
+      <allergyCode code="A02" codeSystem="2.16.840.1.113883.6.1"/>
+      <substance>Aspirin</substance>
+      <reaction>Severe reaction</reaction>
+      <dateTime value="202504101600"/>
+    </Allergy>
+  </AllergyInformation>
+  <Diagnoses>
+    <Diagnosis>
+      <code code="I10" displayName="E11.9^Type 2 diabetes mellitus without complications^ICD-10" codeSystem="2.16.840.1.113883.6.90"/>
+      <text>Chronic condition diagnosed during admission</text>
+      <effectiveTime>
+        <low value="20250410"/>
+      </effectiveTime>
+      <effectiveTime>
+        <high value="20250412"/>
+      </effectiveTime>
+      <diagnosisType>F</diagnosisType>
+    </Diagnosis>
+  </Diagnoses>
+  <recordTarget>
+    <patientRole>
+      <patient classCode="Self Pay^SELF PAY"/>
+      <contactParty classCode="ECON">
+        <telecom value="tel:Emergency Contact: Zeynep Yılmaz"/>
+      </contactParty>
+    </patientRole>
+  </recordTarget>
+  <guarantor>
+    <responsibleParty>
+      <id extension="123456^^^HOSPITAL^MR"/>
+      <name>YILMAZ^AYŞE^</name>
+      <asOtherIDs>
+        <id root="2.16.840.1.113883.4.1" extension="12345678901"/>
+      </asOtherIDs>
+      <birthTime value="123456"/>
+      <telecom value="tel:23456789"/>
+    </responsibleParty>
+  </guarantor>
+  <AssignedRoles>
+    <AssignedRole>
+      <code code="1"/>
+      <assignedPerson>
+        <id extension="AD"/>
+        <name>PP^Primary Care Provider^HL70443</name>
+      </assignedPerson>
+      <effectiveTime>
+        <low value="123456^Smith^John^A^^Dr.^MD"/>
+        <high value="20250412"/>
+      </effectiveTime>
+    </AssignedRole>
+  </AssignedRoles>
+  <ProcedureEvents>
+    <ProcedureEvent>
+      <code code="20250410"/>
+      <text>20250412</text>
+      <effectiveTime value="Dr. Smith^John^A^^Dr."/>
+      <performer>
+        <assignedEntity>
+          <assignedPerson>
+            <name>General Surgery</name>
+          </assignedPerson>
+        </assignedEntity>
+      </performer>
+    </ProcedureEvent>
+  </ProcedureEvents>
+  <Coverage>
+    <Coverage>
+      <insurancePlanId>XYZ12345</insurancePlanId>
+      <insuranceCompany>987654^XYZ Insurance^Corp</insuranceCompany>
+      <insurancePlanCode>ABC12345^Standard Health Plan</insurancePlanCode>
+      <groupNumber>20250412</groupNumber>
+      <insurancePeriod>
+        <startDate>123456789</startDate>
+        <endDate>John^Doe^A^^Mr.</endDate>
+      </insurancePeriod>
+    </Coverage>
+  </Coverage>
+</PRPA_IN101001UV02>
