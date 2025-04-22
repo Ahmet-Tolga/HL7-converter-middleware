@@ -13,9 +13,10 @@ app.use("/v2",v2Router);
 
 app.use("/v3",v3Router);
 
+const port=5000;
 
-app.listen(5000,(err)=>{
+app.listen(port,(err)=>{
     if(!err){
-        console.log("Server is running on port 5000");
+        console.log(`Server is running on port ${port}`);
     }
 })

@@ -12,6 +12,7 @@ module.exports.extractMessageHeader=function(segments) {
   const msh = getFirstSegmentByName('MSH',segments);
 
   return {
+    segmentName: msh[0] || '',
     sendingApplication: msh[2] || '',
     sendingFacility: msh[3] || '',  
     receivingApplication: msh[4] || '',
@@ -31,6 +32,7 @@ module.exports.extractEventInfo = function (segments) {
   const [operatorId, operatorSurname, operatorGivenName] = operatorField.split('^');
 
   return {
+    segmentName: evn[0] || '',
     eventTypeCode: evn[1] || '',
     recordedDateTime: evn[2] || '',
     plannedEvent:evn[3]||'',
@@ -47,7 +49,9 @@ module.exports.extractPatientInfo = function (segments) {
   const pid = getFirstSegmentByName('PID', segments);
 
   return {
-    id: pid[3] || '',
+    segmentName: pid[0] || '',
+
+    id: pid[3].replace(/\^/g, ' ') || '',
 
     externalId:pid[4] ||'',
     
@@ -97,6 +101,7 @@ module.exports.extractNextOfKinInfo=function (segments) {
     const nk1=nkStr.split("|");
 
     return {
+      segmentName: nk1[0] || '',
       relation: nk1[3] || '',
       name: nk1[2] || '',
       phoneNumber: nk1[4] || '',
@@ -109,6 +114,7 @@ module.exports.extractVisitInfo=function(segments) {
   const pv1 = getFirstSegmentByName('PV1',segments);
 
   return {
+    segmentName: pv1[0] || '',
     patientVisitNumber: pv1[19] || '',
     patientLocation: pv1[3] || '',
     visitNumber:pv1[16]||'',
@@ -131,6 +137,7 @@ module.exports.extractVisitAdditionalInfo = function(segments) {
   const pv2 = getFirstSegmentByName('PV2', segments);
 
   return {
+    segmentName: pv2[0] || '',
     priorPendingLocation: pv2[1] || '',
     accommodationCode: pv2[2] || '',
     admitReason: pv2[3] || '',
@@ -156,22 +163,33 @@ module.exports.extractVisitAdditionalInfo = function(segments) {
   };
 };
 
+module.exports.extractOrders = function (segments) {
+  const obrList = getSegmentByName('OBR', segments);
   
-  module.exports.extractOrders = function (segments) {
-    const obrList = getSegmentByName('OBR', segments);
-  
-    return obrList.map(obrStr => {
-      const obr = obrStr.split("|");
-      
-      return {
-        placerOrderNumber: obr[2] || '',
-        fillerOrderNumber:obr[3] ||'',
-        testName: obr[4] || '',
-        observationDateTime: obr[8] || '',
-        orderingProvider: obr[16] || ''
-      };
-    });
-  };
+  return obrList.map(obrStr => {
+    const obr = obrStr.split("|");
+
+    const orderingProviderParts = obr[15]?.split('^') || [];
+    const performingOrgParts = obr[20]?.split('^') || [];
+
+    return {
+      segmentName: obr[0] || '',
+      placerOrderNumber: obr[2] || '',
+      fillerOrderNumber: obr[3] || '',
+      testCode: obr[4] ? obr[4].split('^')[0] || '' : '',
+      testName: obr[4] ? obr[4].split('^')[1] || '' : '',
+      observationDateTime: obr[7] || '',
+      observationEndTime: obr[8] || '',
+      priority: obr[10] || '',
+      orderStatus: obr[25] || '', 
+      orderingProviderId: orderingProviderParts[0] || '',
+      orderingProviderName: orderingProviderParts[1] || '',
+      performingOrganization: performingOrgParts[1] || '',
+      performingOrganizationId: performingOrgParts[0] || '', 
+    };
+  });
+};
+
 
 
   module.exports.extractOrderControlInfo=function (segments) {
@@ -180,15 +198,42 @@ module.exports.extractVisitAdditionalInfo = function(segments) {
     return orcList.map(orcStr => {
       const orc=orcStr.split("|");
 
-      console.log(orc)
+      let orderingProviderId = '';
+      let orderingProviderName = '';
+
+      if (orc[10]) {
+        const providerParts = orc[10].split("^");
+        orderingProviderId = providerParts[0] || '';
+        orderingProviderName = providerParts[1] || '';
+      }
+
+      let quantityTiming = orc[7] || ''; 
+
+      let parentPlacer = '';
+      let parentFiller = '';
+
+      if (orc[7]) {
+        const parentParts = orc[8].split("^");
+        parentPlacer = parentParts[0] || '';
+        parentFiller = parentParts[1] || '';
+      }
 
       return {
+        segmentName: orc[0] || '',
         orderControl: orc[1] || '',
         placerOrderNumber: orc[2] || '',
         fillerOrderNumber: orc[3] || '',
         orderStatus: orc[5] || '',
         scheduledDateTime: orc[9] || '',
-        orderingProvider: orc[10] || ''
+        quantityTiming: quantityTiming, 
+        parent: {                             
+          placerOrderNumber: parentPlacer,
+          fillerOrderNumber: parentFiller
+        },
+        orderingProvider: {
+          id: orderingProviderId,
+          name: orderingProviderName
+        }
       }
     });
   }
@@ -198,17 +243,32 @@ module.exports.extractVisitAdditionalInfo = function(segments) {
   module.exports.extractGuarantorInfo=function (segments) {
     const gt1List = getSegmentByName('GT1',segments);
   
-    return gt1List.map(gtStr=>{
-      const gt1=gtStr.split("|");
-
+    return gt1List.map(gtStr => {
+      const gt1 = gtStr.split("|");
+  
+      const idComponents = gt1[2]?.split("^") || [];
+      const nameParts = gt1[4]?.split("^") || [];
+  
       return {
-        guarantorNumber: gt1[2] || '',
-        guarantorName: gt1[4] || '',
-        guarantorSocialSecurityNumber: gt1[5] || '',
-        guarantorDateOfBirth:gt1[6]||'',
-        guarantorPhone: gt1[7] || ''
+        segmentName: gt1[0] || '',
+        guarantorNumber: {
+          id: idComponents[0] || '',
+          assigningAuthority: idComponents[3] || '',
+          idTypeCode: idComponents[4] || ''
+        },
+        relationship: gt1[3] || '',
+  
+        name: {
+          family: nameParts[0] || '',
+          given: nameParts[1] || '',
+          middle: nameParts[2] || ''
+        },
+  
+        socialSecurityNumber: gt1[5] || '',
+        dateOfBirth: gt1[6] || '',
+        phoneNumber: gt1[7] || ''
       };
-    })
+    });
   }
   
   
@@ -220,6 +280,7 @@ module.exports.extractVisitAdditionalInfo = function(segments) {
 
 
       return {
+        segmentName: al1[0] || '',
         allergyType: al1[2] || '',
         allergyCode:al1[3] || '',
         substance: al1[4] || '',
@@ -230,27 +291,42 @@ module.exports.extractVisitAdditionalInfo = function(segments) {
   }
   
   
-  module.exports.extractObservationResults=function (segments) {
-    const obxList = getSegmentByName('OBX',segments);
-
+  module.exports.extractObservationResults = function (segments) {
+    const obxList = getSegmentByName('OBX', segments);
   
-    return obxList.map(obxStr =>{
-      const obx=obxStr.split("|");
-
+    return obxList.map(obxStr => {
+      const obx = obxStr.split("|");
+  
+      const observationIdParts = (obx[3] || '').split("^");
+      
       return {
-        testCode: obx[2] || '',
+        segmentName: obx[0] || '',
+        setId: obx[1] || '', 
+        valueType: obx[2] || '',
+        testCode: observationIdParts[0] || '',
+        testDisplayName: observationIdParts[1] || '',
+        testCodeSystem: observationIdParts[2] || '',
+        observationSubId: obx[4] || '',
         value: obx[5] || '',
         unit: obx[6] || '',
-        status: obx[7] || '',
-        probability:obx[10]||'',
-        dateTime: obx[15] || ''
-      }
-    } );
-  }
+        referenceRange: obx[7] || '',
+        abnormalFlags: obx[8] || '',
+        observationResultStatus: obx[11] || '', 
+        responsibleObserver: obx[16] || '',
+        dateTime: obx[15] || '',
+        method: obx[17] || '', 
+        equipmentInstanceIdentifier: obx[18] || '', 
+        performingOrganization: obx[23] || '', 
+      };
+    });
+  };
+  
+
   module.exports.extractPatientDemographics=function(segments) {
     const pd1 = getFirstSegmentByName('PD1',segments);
   
     return {
+      segmentName: pd1[0] || '',
       patientClass: pd1[3] || '',
       emergencyContact: pd1[4] || '',
       relation: pd1[5] || '',
@@ -264,27 +340,57 @@ module.exports.extractVisitAdditionalInfo = function(segments) {
     return pr1List.map(pr1Str => {
       const pr1 = pr1Str.split("|");
   
+      const procedureCodeParts = pr1[2]?.split("^") || [];
+      const surgeonParts = pr1[5]?.split("^") || [];
+  
       return {
-        procedureCode: pr1[3] || '',
-        procedureDescription: pr1[4] || '',
-        procedureDateTime: pr1[5] || '',
-        performingPhysician: pr1[6] || ''
+        segmentName: pr1[0] || '',
+        procedureCode: procedureCodeParts[0] || '',
+        procedureName: procedureCodeParts[1] || '',
+        codeSystem: procedureCodeParts[2] || '',
+  
+        procedureStartDate: pr1[3] || '',
+        procedureEndDate: pr1[4] || '',
+  
+        surgeon: {
+          prefix: surgeonParts[4] || '',
+          given: surgeonParts[1] || '',
+          family: surgeonParts[0] || '',
+        },
+  
+        procedureType: pr1[6] || '',
+        description: pr1[7] || ''
       };
     });
   };
+  
 
   module.exports.extractRoleInfo = function(segments) {
     const rolList = getSegmentByName('ROL', segments);
   
     return rolList.map(rolStr => {
-      const rol = rolStr.split("|");
+      const fields = rolStr.split("|");
+  
+      const roleCodeParts = fields[3]?.split("^") || [];
+      const personParts = fields[4]?.split("^") || [];
   
       return {
-        roleCode: rol[1] || '',
-        personId: rol[2] || '',
-        personName: rol[3] || '',
-        roleStartDate: rol[4] || '',
-        roleEndDate: rol[5] || ''
+        segmentName: fields[0] || '',
+        roleCode: roleCodeParts[0] || '',
+        roleDisplayName: roleCodeParts[1] || '',
+        roleCodeSystem: roleCodeParts[2] || '',
+  
+        startDate: fields[5] || '',
+        endDate: fields[6] || '',
+  
+        person: {
+          id: personParts[0] || '',
+          family: personParts[1] || '',
+          given: personParts[2] || '',
+          middle: personParts[3] || '',
+          prefix: personParts[5] || '',
+          suffix: personParts[6] || ''
+        }
       };
     });
   };
@@ -296,15 +402,24 @@ module.exports.extractVisitAdditionalInfo = function(segments) {
       const in1 = in1Str.split("|");
   
       return {
+        segmentName: in1[0] || '',
         insurancePlanId: in1[2] || '',
-        insuranceCompany: in1[3] || '',
-        insurancePlanCode: in1[4] || '',
+        insuranceCompanyId: in1[3]?.split('^')[0] || '',
+        insuranceCompanyName: in1[3]?.split('^')[1] || '',
+        insurancePlanCode: in1[4]?.split('^')[0] || '',
+        insurancePlanName: in1[4]?.split('^')[1] || '',
+        insuranceStartDate: in1[5] || '',
+        insuranceEndDate: in1[6] || '',
         groupNumber: in1[7] || '',
-        insuranceStartDate: in1[10] || '',
-        insuranceEndDate: in1[11] || ''
+        insuredPersonName: in1[11] || '',
+        insuredPersonAddress: in1[12] || '',
+        phoneNumber: in1[13] || '',
+        doctorName: in1[16] || '',
+        doctorRole: in1[17] || '',
       };
     });
   };
+  
     
 
   module.exports.extractDiagnosisInfo = function(segments) {
@@ -314,9 +429,10 @@ module.exports.extractVisitAdditionalInfo = function(segments) {
       const dg1 = dg1Str.split("|");
   
       return {
+        segmentName: dg1[0] || '',
         diagnosisCode: dg1[2] || '',
-        diagnosisName: dg1[3] || '',
-        diagnosisDescription: dg1[4] || '',
+        diagnosisName: dg1[3].replace(/\^/g, ' ') || '',
+        diagnosisDescription: dg1[4].replace(/\^/g, ' ') || '',
         diagnosisDateTime: dg1[5] || '',
         diagnosisEndDateTime: dg1[6] || '',
         diagnosisType: dg1[7] || ''
