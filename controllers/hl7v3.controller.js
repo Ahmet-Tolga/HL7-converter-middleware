@@ -8,7 +8,7 @@ module.exports.createHl7v2Message=async(req,res)=>{
     try{
         const message=await buildMessage(file_path);
         
-        fs.writeFileSync('hl7v2_output.hl7', message);
+        fs.writeFileSync('./output/hl7v2_output.hl7', message);
 
         res.status(202).send(message);
     }

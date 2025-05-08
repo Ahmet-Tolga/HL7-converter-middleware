@@ -13,7 +13,7 @@ module.exports.createHl7v3Message=(req,res)=>{
 
         const xml=buildMessage(segments);
         
-        fs.writeFileSync('hl7v3_output.xml', xml);
+        fs.writeFileSync('./output/hl7v3_output.xml', xml);
 
         res.status(202).send(xml);
     }

@@ -51,9 +51,11 @@ module.exports.extractPatientInfo = function (segments) {
   return {
     segmentName: pid[0] || '',
 
+    externalId:pid[2]||'',
+
     id: pid[3].replace(/\^/g, ' ') || '',
 
-    externalId:pid[4] ||'',
+    altId:pid[4] ||'',
     
     name: pid[5] || '',
 
@@ -110,28 +112,36 @@ module.exports.extractNextOfKinInfo=function (segments) {
   });
 }
 
-module.exports.extractVisitInfo=function(segments) {
-  const pv1 = getFirstSegmentByName('PV1',segments);
+module.exports.extractVisitInfo = function(segments) {
+  const pv1 = getFirstSegmentByName('PV1', segments);
 
   return {
     segmentName: pv1[0] || '',
-    patientVisitNumber: pv1[19] || '',
-    patientLocation: pv1[3] || '',
-    visitNumber:pv1[16]||'',
-    patientClass:pv1[2] || '',
-    patientType:pv1[15] || '',
-    attendingDoctor: pv1[6] || '',
-    admittingDoctor:pv1[20] ||'',
-    refferingDoctor: pv1[7] || '',
-    consultingDoctor: pv1[8] || '',
-    hospitalService:pv1[9] || '',
-    admissionDateTime: pv1[10] || '',
-    dischargeDateTime: pv1[21] || '',
-    admitSource:pv1[13] || '',
-    priority:pv1[19] || ''
+    setId: pv1[1] || '',
+    patientClass: pv1[2] || '',
+    assignedPatientLocation: pv1[3] || '',
+    admissionType: pv1[4] || '',
+    preadmitNumber: pv1[5] || '',
+    priorPatientLocation: pv1[6] || '',
+    attendingDoctor: pv1[7] || '',
+    referringDoctor: pv1[8] || '',
+    consultingDoctor: pv1[9] || '',
+    hospitalService: pv1[10] || '',
+    admissionDateTime: pv1[11] || '',
+    admitSource: pv1[12] || '',
+    ambulatoryStatus: pv1[13] || '',
+    vipIndicator: pv1[14] || '',
+    patientType: pv1[15] || '',
+    visitNumber: pv1[16] || '',
+    patientVisitNumber: pv1[17] || '',
+    financialClass: pv1[18] || '',
+    chargePriceIndicator: pv1[19] || '',
+    courtesyCode: pv1[20] || '',
+    creditRating: pv1[21] || '',
+    dischargeDateTime: pv1[22] || '',
   };
-  
 };
+
 
 module.exports.extractVisitAdditionalInfo = function(segments) {
   const pv2 = getFirstSegmentByName('PV2', segments);

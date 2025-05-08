@@ -74,132 +74,129 @@ function buildHl7V3(messageHeader,patient, orders, event, guarantor, nextOfKin, 
     name.ele('family').txt(event.operator.surname || '');
     name.ele('given').txt(event.operator.givenName || '');
 
-if(patient && patient["segmentName"]!=''){
-
-  const pidElement = root.ele('identifiedPerson')
-  .att('classCode', 'PAT')
-  .att('moodCode', 'EVN');
-
-pidElement.ele('id')
-  .att('extension', patient.id)
-  .att('root', '2.16.840.1.113883.1.3');
-
-pidElement.ele('asOtherIDs')
-  .att('classCode', 'SSN')
-  .ele('id')
-    .att('extension', patient.externalId)
-    .att('root', '2.16.840.1.113883.4.1'); 
-
-const nameElement = pidElement.ele('name');
-const nameParts = patient.name.split('^');
-nameElement.ele('family').txt(nameParts[0] || '');
-nameElement.ele('given').txt(nameParts[1] || '');
-nameElement.ele('middle').txt(nameParts[2] || '');
-nameElement.ele('prefix').txt(nameParts[3] || '');
-nameElement.ele('suffix').txt(nameParts[4] || '');
-
-pidElement.ele('personalRelationship')
-  .att('classCode', 'PRS')
-  .att('code', 'MTH') 
-  .ele('name').txt(patient.motherMaidenName || '');
-
-pidElement.ele('birthTime').att('value', patient.birthDate);
-
-pidElement.ele('administrativeGenderCode')
-  .att('code', patient.gender === 'M' ? 'M' : 'F')
-  .att('codeSystem', '2.16.840.1.113883.5.1');
-
-if (patient.patientAlias) {
-  pidElement.ele('asOtherName')
-    .att('classCode', 'ALIAS')
-    .ele('name').txt(patient.patientAlias);
-}
-
-if (patient.race) {
-  pidElement.ele('raceCode')
-    .att('code', patient.race)
-    .att('codeSystem', '2.16.840.1.113883.6.238');
-}
-
-if (patient.ethnicity) {
-  pidElement.ele('ethnicGroupCode')
-    .att('code', patient.ethnicity)
-    .att('codeSystem', '2.16.840.1.113883.6.238');
-}
-
-const addressParts = patient.address.split('^');
-const addrElement = pidElement.ele('addr');
-addrElement.ele('streetAddressLine').txt(addressParts[0] || '');
-addrElement.ele('city').txt(addressParts[2] || '');
-addrElement.ele('state').txt(addressParts[3] || '');
-addrElement.ele('postalCode').txt(addressParts[4] || '');
-addrElement.ele('country').txt(patient.countryCode || '');
-
-const phoneParts = (patient.phoneNumber || '').split('~');
-pidElement.ele('telecom')
-  .att('use', 'PRN')
-  .att('value', `tel:${phoneParts[0]?.split('^')[0] || ''}`);
-if (phoneParts[1]) {
-  pidElement.ele('telecom')
-    .att('use', 'CP')
-    .att('value', `tel:${phoneParts[1].split('^')[0]}`);
-}
-
-if (patient.bussinessPhone) {
-  pidElement.ele('telecom')
-    .att('use', 'WP')
-    .att('value', `tel:${patient.bussinessPhone.split('^')[0]}`);
-}
-
-if (patient.primaryLanguage) {
-  pidElement.ele('languageCommunication')
-    .ele('languageCode')
-      .att('code', patient.primaryLanguage);
-}
-
-if (patient.maritalStatus) {
-  pidElement.ele('maritalStatusCode')
-    .att('code', patient.maritalStatus)
-    .att('codeSystem', '2.16.840.1.113883.5.2');
-}
-
-if (patient.religion) {
-  pidElement.ele('religiousAffiliationCode')
-    .att('code', patient.religion)
-    .att('codeSystem', '2.16.840.1.113883.5.1076');
-}
-
-if (patient.accountNumber) {
-  pidElement.ele('coveredPartyOf')
-    .ele('id')
-      .att('extension', patient.accountNumber)
-      .att('root', '2.16.840.1.113883.19.5');  // Örnek kök
-}
-
-if (patient.ssn) {
-  pidElement.ele('asOtherIDs')
-    .att('classCode', 'SSN')
-    .ele('id')
-      .att('extension', patient.ssn)
-      .att('root', '2.16.840.1.113883.4.1');
-}
-
-if (patient.drieverLicense) {
-  pidElement.ele('asOtherIDs')
-    .att('classCode', 'DL')
-    .ele('id')
-      .att('extension', patient.drieverLicense)
-      .att('root', '2.16.840.1.113883.4.3');
-}
-
-if (patient.motherId) {
-  pidElement.ele('personalRelationship')
-    .att('classCode', 'PRS')
-    .att('code', 'MTH')
-    .ele('id')
-      .att('extension', patient.motherId);
-}
-}
+    if (patient && patient["segmentName"] !== '') {
+      const pidElement = root.ele('identifiedPerson')
+        .att('classCode', 'PAT')
+        .att('moodCode', 'EVN');
+    
+      pidElement.ele('id')
+        .att('extension', patient.id)
+        .att('root', '2.16.840.1.113883.1.3');
+    
+      const nameElement = pidElement.ele('name');
+      const nameParts = (patient.name || '').split('^');
+      nameElement.ele('family').txt(nameParts[0] || '');
+      nameElement.ele('given').txt(nameParts[1] || '');
+      nameElement.ele('middle').txt(nameParts[2] || '');
+      nameElement.ele('prefix').txt(nameParts[3] || '');
+      nameElement.ele('suffix').txt(nameParts[4] || '');
+    
+      const personalRelElement = pidElement.ele('personalRelationship')
+        .att('classCode', 'PRS')
+        .att('code', 'MTH');
+    
+      if (patient.motherMaidenName) {
+        personalRelElement.ele('name').txt(patient.motherMaidenName);
+      }
+    
+      if (patient.motherId) {
+        personalRelElement.ele('id').att('extension', patient.motherId);
+      }
+    
+      pidElement.ele('birthTime').att('value', patient.birthDate);
+    
+      pidElement.ele('administrativeGenderCode')
+        .att('code', patient.gender === 'M' ? 'M' : 'F')
+        .att('codeSystem', '2.16.840.1.113883.5.1');
+    
+      if (patient.patientAlias) {
+        pidElement.ele('asOtherName')
+          .att('classCode', 'ALIAS')
+          .ele('name').txt(patient.patientAlias);
+      }
+    
+      if (patient.race) {
+        pidElement.ele('raceCode')
+          .att('code', patient.race)
+          .att('codeSystem', '2.16.840.1.113883.6.238');
+      }
+    
+      if (patient.ethnicity) {
+        pidElement.ele('ethnicGroupCode')
+          .att('code', patient.ethnicity)
+          .att('codeSystem', '2.16.840.1.113883.6.238');
+      }
+    
+      if (patient.address) {
+        const addressParts = patient.address.split('^');
+        const addrElement = pidElement.ele('addr');
+        addrElement.ele('streetAddressLine').txt(addressParts[0] || '');
+        addrElement.ele('city').txt(addressParts[2] || '');
+        addrElement.ele('state').txt(addressParts[3] || '');
+        addrElement.ele('postalCode').txt(addressParts[4] || '');
+        addrElement.ele('country').txt(addressParts[5]|| '');
+      }
+    
+      if (patient.phoneNumber) {
+        const phoneParts = patient.phoneNumber.split('~');
+        pidElement.ele('telecom')
+          .att('use', 'PRN')
+          .att('value', `tel:${phoneParts[0]?.split('^')[0] || ''}`);
+        if (phoneParts[1]) {
+          pidElement.ele('telecom')
+            .att('use', 'CP')
+            .att('value', `tel:${phoneParts[1].split('^')[0]}`);
+        }
+      }
+    
+      if (patient.bussinessPhone) {
+        pidElement.ele('telecom')
+          .att('use', 'WP')
+          .att('value', `tel:${patient.bussinessPhone.split('^')[0]}`);
+      }
+    
+      if (patient.primaryLanguage) {
+        pidElement.ele('languageCommunication')
+          .ele('languageCode')
+          .att('code', patient.primaryLanguage);
+      }
+    
+      if (patient.maritalStatus) {
+        pidElement.ele('maritalStatusCode')
+          .att('code', patient.maritalStatus)
+          .att('codeSystem', '2.16.840.1.113883.5.2');
+      }
+    
+      if (patient.religion) {
+        pidElement.ele('religiousAffiliationCode')
+          .att('code', patient.religion)
+          .att('codeSystem', '2.16.840.1.113883.5.1076');
+      }
+    
+      if (patient.accountNumber) {
+        pidElement.ele('coveredPartyOf')
+          .ele('id')
+          .att('extension', patient.accountNumber)
+          .att('root', '2.16.840.1.113883.19.5');
+      }
+    
+      if (patient.ssn) {
+        pidElement.ele('asOtherIDs')
+          .att('classCode', 'SSN')
+          .ele('id')
+          .att('extension', patient.ssn)
+          .att('root', '2.16.840.1.113883.4.1');
+      }
+    
+      if (patient.driverLicense) { 
+        pidElement.ele('asOtherIDs')
+          .att('classCode', 'DL')
+          .ele('id')
+          .att('extension', patient.driverLicense)
+          .att('root', '2.16.840.1.113883.4.3');
+      }
+    }
+    
 
 if(nextOfKin && nextOfKin.length>0 && nextOfKin[0].segmentName!=''){
   const nk1Element = root.ele('nextOfKin');
@@ -237,98 +234,131 @@ if(nextOfKin && nextOfKin.length>0 && nextOfKin[0].segmentName!=''){
     }});
 }
 
-    if(visit && visit["segmentName"]!=''){
+if (visit && visit.segmentName !== '') {
 
-    const pv1Element = root.ele('patientVisit');
+  const pv1Element = root.ele('patientVisit');
 
-    pv1Element.ele('id')
+  pv1Element.ele('id')
       .att('extension', visit.patientVisitNumber || '')
       .att('root', '2.16.840.1.113883.1.3'); 
 
-    if (visit.patientLocation) {
+  if (visit.assignedPatientLocation) {
       pv1Element.ele('location')
-        .att('value', visit.patientLocation);
-    }
+          .att('value', visit.assignedPatientLocation);
+  }
 
-    if (visit.visitNumber) {
+  if (visit.visitNumber) {
       pv1Element.ele('visitNumber')
-        .att('value', visit.visitNumber);
-    }
+          .att('value', visit.visitNumber);
+  }
 
-    if (visit.patientClass) {
+  if (visit.patientClass) {
       pv1Element.ele('patientClass')
-        .att('value', visit.patientClass);
-    }
+          .att('value', visit.patientClass);
+  }
 
-    if (visit.patientType) {
+  if (visit.patientType) {
       pv1Element.ele('patientType')
-        .att('value', visit.patientType);
-    }
+          .att('value', visit.patientType);
+  }
 
-    if (visit.attendingDoctor) {
+  if (visit.attendingDoctor) {
       const attendingDoctor = pv1Element.ele('attendingDoctor');
       const attendingPerson = attendingDoctor.ele('assignedPerson');
       const attendingName = attendingPerson.ele('name');
       const [attendingSurname, attendingGiven] = visit.attendingDoctor.split('^');
       attendingName.ele('family').txt(attendingSurname || '');
       attendingName.ele('given').txt(attendingGiven || '');
-    }
+  }
 
-    if (visit.admittingDoctor) {
-      const admittingDoctor = pv1Element.ele('admittingDoctor');
-      const admittingPerson = admittingDoctor.ele('assignedPerson');
-      const admittingName = admittingPerson.ele('name');
-      const [admittingSurname, admittingGiven] = visit.admittingDoctor.split('^');
-      admittingName.ele('family').txt(admittingSurname || '');
-      admittingName.ele('given').txt(admittingGiven || '');
-    }
-
-
-    if (visit.refferingDoctor) {
-      const referringDoctor = pv1Element.ele('refferingDoctor');
+  if (visit.referringDoctor) {
+      const referringDoctor = pv1Element.ele('referringDoctor');
       const referringPerson = referringDoctor.ele('assignedPerson');
       const referringName = referringPerson.ele('name');
-      const [referringSurname, referringGiven] = visit.refferingDoctor.split('^');
+      const [referringSurname, referringGiven] = visit.referringDoctor.split('^');
       referringName.ele('family').txt(referringSurname || '');
       referringName.ele('given').txt(referringGiven || '');
-    }
+  }
 
-
-    if (visit.consultingDoctor) {
+  if (visit.consultingDoctor) {
       const consultingDoctor = pv1Element.ele('consultingDoctor');
       const consultingPerson = consultingDoctor.ele('assignedPerson');
       const consultingName = consultingPerson.ele('name');
       const [consultingSurname, consultingGiven] = visit.consultingDoctor.split('^');
       consultingName.ele('family').txt(consultingSurname || '');
       consultingName.ele('given').txt(consultingGiven || '');
-    }
+  }
 
-
-    if (visit.hospitalService) {
+  if (visit.hospitalService) {
       pv1Element.ele('hospitalService')
-        .att('value', visit.hospitalService);
+          .att('value', visit.hospitalService);
+  }
+
+    if(visit.admissionType){
+      pv1Element.ele('admissionType')
+          .att('value',visit.admissionType)
     }
 
-    if (visit.admissionDateTime) {
+  if (visit.admissionDateTime) {
       pv1Element.ele('admissionDateTime')
-        .att('value', visit.admissionDateTime);  
-    }
+          .att('value', visit.admissionDateTime);  
+  }
 
-    if (visit.dischargeDateTime) {
+  if (visit.dischargeDateTime) {
       pv1Element.ele('dischargeDateTime')
-        .att('value', visit.dischargeDateTime);  
-    }
+          .att('value', visit.dischargeDateTime);  
+  }
 
-    if (visit.admitSource) {
+  if (visit.admitSource) {
       pv1Element.ele('admitSource')
-        .att('value', visit.admitSource);
-    }
+          .att('value', visit.admitSource);
+  }
 
-    if (visit.priority) {
+  if (visit.priority) {
       pv1Element.ele('priority')
-        .att('value', visit.priority);
-    }
-    }
+          .att('value', visit.priority);
+  }
+
+  if (visit.ambulatoryStatus) {
+      pv1Element.ele('ambulatoryStatus')
+          .att('value', visit.ambulatoryStatus);
+  }
+
+  if (visit.vipIndicator) {
+      pv1Element.ele('vipIndicator')
+          .att('value', visit.vipIndicator);
+  }
+
+  if (visit.preadmitNumber) {
+      pv1Element.ele('preadmitNumber')
+          .att('value', visit.preadmitNumber);
+  }
+
+  if (visit.priorPatientLocation) {
+      pv1Element.ele('priorPatientLocation')
+          .att('value', visit.priorPatientLocation);
+  }
+
+  if (visit.financialClass) {
+      pv1Element.ele('financialClass')
+          .att('value', visit.financialClass);
+  }
+
+  if (visit.chargePriceIndicator) {
+      pv1Element.ele('chargePriceIndicator')
+          .att('value', visit.chargePriceIndicator);
+  }
+
+  if (visit.courtesyCode) {
+      pv1Element.ele('courtesyCode')
+          .att('value', visit.courtesyCode);
+  }
+
+  if (visit.creditRating) {
+      pv1Element.ele('creditRating')
+          .att('value', visit.creditRating);
+  }
+}
 
     if(visitAddition && visitAddition["segmentName"]!=''){
       const pv2Element = root.ele('patientVisitAdditionalInfo');
@@ -771,7 +801,7 @@ if(nextOfKin && nextOfKin.length>0 && nextOfKin[0].segmentName!=''){
         const name = playingEntity.ele('name');
         if (role.person.prefix) name.ele('prefix').txt(role.person.prefix);
         if (role.person.given) name.ele('given').txt(role.person.given);
-        if (role.person.middle) name.ele('given').txt(role.person.middle); // Ortanca ad da 'given'
+        if (role.person.middle) name.ele('given').txt(role.person.middle);
         if (role.person.family) name.ele('family').txt(role.person.family);
         if (role.person.suffix) name.ele('suffix').txt(role.person.suffix);
 
@@ -855,7 +885,7 @@ if(nextOfKin && nextOfKin.length>0 && nextOfKin[0].segmentName!=''){
       const name = beneficiary.ele('name');
       name.ele('given').txt(nameParts[0] || '');
       name.ele('family').txt(nameParts[1] || '');
-      if (nameParts[4]) name.ele('prefix').txt(nameParts[4]); // Mr., Mrs. vs.
+      if (nameParts[4]) name.ele('prefix').txt(nameParts[4]); 
     }
 
     if (in1.insuredPersonAddress) {

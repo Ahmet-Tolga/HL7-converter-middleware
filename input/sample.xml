@@ -6,6 +6,7 @@
   <processingCode code="P"/>
   <processingModeCode code="T"/>
   <acceptAckCode code="AL"/>
+  <securityText>password123</securityText>
   <receiver typeCode="RCV">
     <device classCode="DEV" determinerCode="INSTANCE">
       <id root="LAB"/>
@@ -21,6 +22,12 @@
   <controlActProcess classCode="CACT" moodCode="EVN">
     <code code="A01" codeSystem="2.16.840.1.113883.1.18"/>
     <effectiveTime value="202504101200"/>
+    <subject typeCode="SUBJ">
+      <act classCode="ACT" moodCode="APT">
+        <code code="202504101200" codeSystem="2.16.840.1.113883.5.4"/>
+      </act>
+    </subject>
+    <reasonCode code="01" codeSystem="2.16.840.1.113883.5.8"/>
     <authorOrPerformer typeCode="AUT">
       <assignedPerson>
         <id extension="12345"/>
@@ -33,9 +40,6 @@
   </controlActProcess>
   <identifiedPerson classCode="PAT" moodCode="EVN">
     <id extension="123456   HOSPITAL MR" root="2.16.840.1.113883.1.3"/>
-    <asOtherIDs classCode="SSN">
-      <id extension="" root="2.16.840.1.113883.4.1"/>
-    </asOtherIDs>
     <name>
       <family>YILMAZ</family>
       <given>AYŞE</given>
@@ -44,19 +48,32 @@
       <suffix/>
     </name>
     <personalRelationship classCode="PRS" code="MTH">
-      <name/>
+      <name>KAYA</name>
+      <id extension="MOTHER123"/>
     </personalRelationship>
     <birthTime value="19850523"/>
     <administrativeGenderCode code="F" codeSystem="2.16.840.1.113883.5.1"/>
+    <asOtherName classCode="ALIAS">
+      <name>YILMAZ AYŞE</name>
+    </asOtherName>
+    <raceCode code="TUR" codeSystem="2.16.840.1.113883.6.238"/>
     <addr>
       <streetAddressLine>123 SOKAK NO:10</streetAddressLine>
       <city>ISTANBUL</city>
       <state/>
       <postalCode>34000</postalCode>
-      <country/>
+      <country>TR</country>
     </addr>
     <telecom use="PRN" value="tel:(212)5551234"/>
+    <telecom use="WP" value="tel:(212)5555678"/>
+    <languageCommunication>
+      <languageCode code="TUR"/>
+    </languageCommunication>
     <maritalStatusCode code="M" codeSystem="2.16.840.1.113883.5.2"/>
+    <religiousAffiliationCode code="ISL" codeSystem="2.16.840.1.113883.5.1076"/>
+    <coveredPartyOf>
+      <id extension="12345678901" root="2.16.840.1.113883.19.5"/>
+    </coveredPartyOf>
     <asOtherIDs classCode="SSN">
       <id extension="12345678901" root="2.16.840.1.113883.4.1"/>
     </asOtherIDs>
@@ -90,11 +107,11 @@
     </nextOfKinInfo>
   </nextOfKin>
   <patientVisit>
-    <id extension="A" root="2.16.840.1.113883.1.3"/>
+    <id extension="VISIT123" root="2.16.840.1.113883.1.3"/>
     <location value="CARDIO^101^1^HOSPITAL"/>
-    <visitNumber value="202504101500"/>
+    <visitNumber value="S"/>
     <patientClass value="I"/>
-    <patientType value="S"/>
+    <patientType value="123456"/>
     <attendingDoctor>
       <assignedPerson>
         <name>
@@ -103,22 +120,14 @@
         </name>
       </assignedPerson>
     </attendingDoctor>
-    <admittingDoctor>
-      <assignedPerson>
-        <name>
-          <family>12345</family>
-          <given>Dr.Smith</given>
-        </name>
-      </assignedPerson>
-    </admittingDoctor>
-    <refferingDoctor>
+    <referringDoctor>
       <assignedPerson>
         <name>
           <family>67890</family>
           <given>Dr.Jones</given>
         </name>
       </assignedPerson>
-    </refferingDoctor>
+    </referringDoctor>
     <consultingDoctor>
       <assignedPerson>
         <name>
@@ -128,10 +137,18 @@
       </assignedPerson>
     </consultingDoctor>
     <hospitalService value="2345^NURSE HARRY^NURSE"/>
+    <admissionType value="EMERGENCY"/>
     <admissionDateTime value="202504101300"/>
-    <dischargeDateTime value="202504101530"/>
-    <admitSource value="^S"/>
-    <priority value="A"/>
+    <dischargeDateTime value="202504101500"/>
+    <admitSource value="ADMIT"/>
+    <ambulatoryStatus value="AMB"/>
+    <vipIndicator value="N"/>
+    <preadmitNumber value="PRE123456"/>
+    <priorPatientLocation value="ER^Main^1^HOSPITAL"/>
+    <financialClass value="PRIVATE"/>
+    <chargePriceIndicator value="SELF"/>
+    <courtesyCode value="A"/>
+    <creditRating value="GOOD"/>
   </patientVisit>
   <patientVisitAdditionalInfo>
     <priorPendingLocation value="1"/>
@@ -215,13 +232,14 @@
       <id root="1234567"/>
       <code code="RE" codeSystem="2.16.840.1.113883.5.4" displayName="Order Control"/>
       <statusCode code="cm"/>
-      <effectiveTime value="202504101800"/>
+      <effectiveTime value="NEW"/>
+      <quantityTiming value="987654^Dr.John^Doe^MD^^^L"/>
+      <parent>
+        <placerOrderNumber>1234567890</placerOrderNumber>
+      </parent>
       <author>
         <assignedAuthor>
-          <id root="12345"/>
-          <assignedPerson>
-            <name>Dr.Smith</name>
-          </assignedPerson>
+          <id root="202504101800"/>
         </assignedAuthor>
       </author>
     </act>
@@ -273,6 +291,7 @@
   <guarantor>
     <assignedEntity>
       <id extension="123456" assigningAuthorityName="HOSPITAL" root="MR"/>
+      <code code="YILMAZ^AYŞE^MR^" codeSystem="2.16.840.1.113883.5.111" displayName="Guarantor Relationship"/>
       <assignedPerson>
         <name>
           <given>AYŞE</given>
